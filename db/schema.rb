@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150810060441) do
+ActiveRecord::Schema.define(version: 20150810104846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,9 +19,10 @@ ActiveRecord::Schema.define(version: 20150810060441) do
   create_table "pivotal_tracker_stories", force: :cascade do |t|
     t.string   "tracker_id"
     t.string   "name"
-    t.json     "data",       default: {}
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.json     "data",            default: {}
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.integer  "pull_request_no"
   end
 
 end
