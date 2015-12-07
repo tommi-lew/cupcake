@@ -25,8 +25,8 @@ describe GithubService do
       story1.reload
       story2.reload
 
-      expect(story1.pull_request_no).to eq(10)
-      expect(story2.pull_request_no).to eq(20)
+      expect(story1.pull_request_nos).to eq([10])
+      expect(story2.pull_request_nos).to eq([20])
     end
   end
 

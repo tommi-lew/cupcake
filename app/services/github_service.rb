@@ -9,7 +9,7 @@ class GithubService
 
       next if pull_request.nil?
 
-      story.update_attributes(pull_request_no: pull_request.number)
+      story.update_attributes(pull_request_nos: [pull_request.number])
     end
   end
 
