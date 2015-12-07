@@ -3,6 +3,7 @@ FactoryGirl.define do
     sequence(:tracker_id) { |n| n + 1 }
     sequence(:name) { |n| "Fake story #{n}" }
     sequence(:pt_owner_ids) { [2222222, 3333333] }
+    sequence(:state) { 'started' }
     sequence(:data) { |n| generate_data(n + 1) }
   end
 end

@@ -14,6 +14,7 @@ class PivotalTrackerService
       story.update_attributes(
         name: raw_story['name'],
         pt_owner_ids: raw_story['owner_ids'],
+        state: raw_story['current_state'],
         data: raw_story
       )
     end

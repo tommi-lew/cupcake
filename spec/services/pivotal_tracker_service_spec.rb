@@ -51,6 +51,7 @@ describe PivotalTrackerService do
       PivotalTrackerStory.create(
         tracker_id: '111111111',
         name: 'Fake story',
+        state: 'started',
         data: fake_response_body.first
       )
 

@@ -5,6 +5,7 @@ describe PivotalTrackerStory do
 
   it { should validate_presence_of :tracker_id }
   it { should validate_presence_of :name }
+  it { should validate_inclusion_of(:state).in_array(PivotalTrackerStory::VALID_STATES) }
 
   describe 'scopes' do
     describe '.without_pull_requests' do

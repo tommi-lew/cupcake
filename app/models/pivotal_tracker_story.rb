@@ -1,5 +1,8 @@
 class PivotalTrackerStory < ActiveRecord::Base
-  validates_presence_of :tracker_id, :name
+  VALID_STATES = %w(unscheduled unstarted started finished delivered accepted rejected)
+
+  validates_presence_of :tracker_id, :name, :state
+  validates_inclusion_of :state, in: VALID_STATES
 
   scope :without_pull_requests, -> { where(pull_request_nos: '{}') }
 
