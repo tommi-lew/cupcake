@@ -15,7 +15,7 @@ describe PivotalTrackerService do
        "requested_by_id" => 2222222,
        "project_id" => 123456,
        "url" => "https://www.pivotaltracker.com/story/show/111111111",
-       "owner_ids" => [2222222],
+       "owner_ids" => [2222222, 3333333],
        "labels" => [],
        "owned_by_id" => 2222222
      }]
@@ -43,6 +43,7 @@ describe PivotalTrackerService do
       story = PivotalTrackerStory.last
       expect(story.tracker_id).to eq '111111111'
       expect(story.name).to eq 'Fake story'
+      expect(story.pt_owner_ids).to eq [2222222, 3333333]
       expect(story.data).to eq fake_response_body.first
     end
 
