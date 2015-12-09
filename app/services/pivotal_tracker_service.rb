@@ -6,15 +6,21 @@ class PivotalTrackerService
     @pivotal_tracker_token = Rails.application.secrets.pivotal_tracker_token
   end
 
-  def get_started_stories
-    url = ENDPOINT_HOST + stories_endpoint('state:started')
+  def get_stories(filters = nil)
+    url = ENDPOINT_HOST + stories_endpoint(filters)
     response = Excon.get(url, headers: headers)
     JSON.parse(response.body)
   end
 
-  def create_or_update_stories(raw_stories)
+  def create_or_update_stories(raw_stories, update_only: true)
     raw_stories.each do |raw_story|
-      story = PivotalTrackerStory.find_or_create_by(tracker_id: raw_story['id'])
+      story = if !update_only
+                PivotalTrackerStory.find_or_create_by(tracker_id: raw_story['id'])
+              else
+                PivotalTrackerStory.find_by(tracker_id: raw_story['id'])
+              end
+
+      next unless story
 
       story.update_attributes(
         name: raw_story['name'],

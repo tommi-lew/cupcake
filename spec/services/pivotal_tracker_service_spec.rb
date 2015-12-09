@@ -3,7 +3,7 @@ require 'rails_helper'
 describe PivotalTrackerService do
   let(:service) { PivotalTrackerService.new }
 
-  def fake_response_body
+  def fake_response_body(custom_values = {})
     [{
        "kind" => "story",
        "id" => 111111111,
@@ -20,7 +20,7 @@ describe PivotalTrackerService do
        "owner_ids" => [2222222, 3333333],
        "labels" => [],
        "owned_by_id" => 2222222
-     }]
+     }.merge(custom_values)]
   end
 
   describe '#get_stories' do
@@ -30,7 +30,7 @@ describe PivotalTrackerService do
       stub(fake_response).body { fake_response_body.to_json }
       mock(Excon).get(anything, anything) { fake_response }
 
-      stories = service.get_started_stories
+      stories = service.get_stories
 
       expect(stories).to eq(fake_response_body)
     end
@@ -39,7 +39,7 @@ describe PivotalTrackerService do
   describe '#create_or_update_stories' do
     it 'create new pivotal tracker stories' do
       expect {
-        service.create_or_update_stories(fake_response_body)
+        service.create_or_update_stories(fake_response_body, update_only: false)
       }.to change(PivotalTrackerStory, :count).by(1)
 
       story = PivotalTrackerStory.last
@@ -50,7 +50,8 @@ describe PivotalTrackerService do
     end
 
     it 'updates existing pivotal tracker stories' do
-      PivotalTrackerStory.create(
+      create(
+        :pivotal_tracker_story,
         tracker_id: '111111111',
         name: 'Fake story',
         state: 'started',
@@ -66,6 +67,34 @@ describe PivotalTrackerService do
 
       story = PivotalTrackerStory.last
       expect(story.name).to eq 'Very fake story'
+    end
+
+    context 'update only' do
+      before do
+        create(
+          :pivotal_tracker_story,
+          tracker_id: '111111111',
+          name: 'Fake story',
+          state: 'started',
+          data: fake_response_body
+        )
+      end
+
+      it 'does not create a new story' do
+        expect {
+          service.create_or_update_stories(fake_response_body, update_only: true)
+        }.to change(PivotalTrackerStory, :count).by(0)
+      end
+
+      it 'update existing story' do
+        service.create_or_update_stories(
+          fake_response_body('owner_ids' => [9999999]),
+          update_only: true
+        )
+
+        story = PivotalTrackerStory.last
+        expect(story.pt_owner_ids).to eq([9999999])
+      end
     end
   end
 
