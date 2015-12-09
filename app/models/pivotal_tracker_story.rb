@@ -13,4 +13,12 @@ class PivotalTrackerStory < ActiveRecord::Base
   def pull_request_nos
     super.map(&:to_i)
   end
+
+  def self.create_and_update_states
+    %w(started)
+  end
+
+  def self.only_update_states
+    PivotalTrackerStory::VALID_STATES.reject{|state| state == 'started'}
+  end
 end

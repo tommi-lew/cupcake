@@ -32,4 +32,17 @@ describe PivotalTrackerStory do
       expect(PivotalTrackerStory.last.pull_request_nos).to eq([2222222, 3333333])
     end
   end
+
+  describe '.create_and_update_states' do
+    it 'return states' do
+      expect(PivotalTrackerStory.create_and_update_states).to eq(%w(started))
+    end
+  end
+
+  describe '.only_update_states' do
+    it 'return states' do
+      expected_states = %w(unscheduled unstarted finished delivered accepted rejected)
+      expect(PivotalTrackerStory.only_update_states).to eq(expected_states)
+    end
+  end
 end

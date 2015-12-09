@@ -31,6 +31,18 @@ class PivotalTrackerService
     end
   end
 
+  def bulk_update
+    PivotalTrackerStory.create_and_update_states.each do |state|
+      json_response = get_stories("state:#{state}")
+      create_or_update_stories(json_response, update_only: false)
+    end
+
+    PivotalTrackerStory.only_update_states.each do |state|
+      json_response = get_stories("state:#{state}")
+      create_or_update_stories(json_response, update_only: true)
+    end
+  end
+
   private
 
   def stories_endpoint(filters = nil)

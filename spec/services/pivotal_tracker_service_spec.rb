@@ -58,8 +58,7 @@ describe PivotalTrackerService do
         data: fake_response_body.first
       )
 
-      changed_fake_response_body = fake_response_body.dup
-      changed_fake_response_body[0]['name'] = 'Very fake story'
+      changed_fake_response_body = fake_response_body('name' => 'Very fake story')
 
       expect {
         service.create_or_update_stories(changed_fake_response_body)
@@ -95,6 +94,24 @@ describe PivotalTrackerService do
         story = PivotalTrackerStory.last
         expect(story.pt_owner_ids).to eq([9999999])
       end
+    end
+  end
+
+  describe '#bulk_update' do
+    it 'update stories for all states' do
+      fake_response = fake_response_body
+
+      PivotalTrackerStory.create_and_update_states.each do |state|
+        mock(service).get_stories("state:#{state}") { fake_response }
+        mock(service).create_or_update_stories(fake_response, update_only: false)
+      end
+
+      PivotalTrackerStory.only_update_states.each do |state|
+        mock(service).get_stories("state:#{state}") { fake_response }
+        mock(service).create_or_update_stories(fake_response, update_only: true)
+      end
+
+      service.bulk_update
     end
   end
 
