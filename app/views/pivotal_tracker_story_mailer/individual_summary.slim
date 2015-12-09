@@ -1,0 +1,13 @@
+= "Hi #{@user.name}. Here are your open stories as of #{Date.current}."
+
+br
+br
+
+= render 'summary', stories: @stories
+
+br
+br
+
+| Xoxo,
+br
+| Cupcake

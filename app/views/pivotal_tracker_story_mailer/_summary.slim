@@ -1,0 +1,9 @@
+table
+  tr
+    th ID
+    th Stories
+
+  - stories.each do |story|
+    tr
+      td= story.tracker_id
+      td= story.name

@@ -1,0 +1,14 @@
+= "Hi #{@user.name}. Here is the overall summary as of #{Date.current}."
+
+br
+br
+
+- @dev_stories.each do |stories|
+  = "Open stories for #{stories.keys[0]}"
+  = render 'summary', stories: stories.values[0]
+  br
+  br
+
+| Xoxo,
+br
+| Cupcake
