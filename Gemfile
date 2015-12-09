@@ -10,6 +10,7 @@ gem 'unicorn'
 gem 'excon'
 gem 'github_api'
 gem 'foundation-rails'
+gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'

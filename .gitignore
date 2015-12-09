@@ -8,3 +8,6 @@
 
 # Environment variables for development
 config/environment_variables.rb
+
+# Heroku Secrets
+config/secrets.yml
