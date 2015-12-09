@@ -1,13 +1,18 @@
 class PivotalTrackerService
   ENDPOINT_HOST = 'https://www.pivotaltracker.com/services/v5'
 
-  def self.get_stories
-    url = ENDPOINT_HOST + stories_endpoint + '?filter=state:started'
+  def initialize
+    @project_id = Rails.application.secrets.pivotal_tracker_project_id
+    @pivotal_tracker_token = Rails.application.secrets.pivotal_tracker_token
+  end
+
+  def get_started_stories
+    url = ENDPOINT_HOST + stories_endpoint('state:started')
     response = Excon.get(url, headers: headers)
     JSON.parse(response.body)
   end
 
-  def self.create_or_update_stories(raw_stories)
+  def create_or_update_stories(raw_stories)
     raw_stories.each do |raw_story|
       story = PivotalTrackerStory.find_or_create_by(tracker_id: raw_story['id'])
 
@@ -22,13 +27,23 @@ class PivotalTrackerService
 
   private
 
-  def self.stories_endpoint
-    "/projects/#{ENV['PIVOTAL_TRACKER_PROJECT_ID']}/stories"
+  def stories_endpoint(filters = nil)
+    url = "/projects/#{@project_id}/stories"
+
+    if filters.present?
+      return url + "?filter=#{filters}"
+    end
+
+    url
   end
 
-  def self.headers
+  def story_endpoint(story_id)
+    "/projects/#{@project_id}/stories/#{story_id}"
+  end
+
+  def headers
     {
-      'X-TrackerToken' => ENV['PIVOTAL_TRACKER_API_TOKEN'],
+      'X-TrackerToken' => @pivotal_tracker_token,
       'Content-Type' => 'application/json'
     }
   end
