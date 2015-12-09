@@ -9,7 +9,7 @@ class StoriesSummarizer
   def self.send_overall_summaries
     devs_and_stories = []
 
-    User.where(role: 'dev', enabled: true).each do |dev|
+    User.where(role: 'dev').each do |dev|
       stories = PivotalTrackerStory.for_user(dev)
       devs_and_stories << { dev.name => stories.to_a }
     end
