@@ -18,6 +18,19 @@ describe PivotalTrackerStory do
         expect(stories).to include(*stories_without_pr)
       end
     end
+
+    describe '.for_user' do
+      it 'returns stories for a specific user' do
+        user = create(:user)
+        story = create(:pivotal_tracker_story, pt_owner_ids: [user.pt_id])
+        create(:pivotal_tracker_story)
+
+        stories = PivotalTrackerStory.for_user(user)
+
+        expect(stories.size).to eq(1)
+        expect(stories.first).to eq(story)
+      end
+    end
   end
 
   describe '#pt_owner_ids' do

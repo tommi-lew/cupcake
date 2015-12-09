@@ -5,6 +5,7 @@ class PivotalTrackerStory < ActiveRecord::Base
   validates_inclusion_of :state, in: VALID_STATES
 
   scope :without_pull_requests, -> { where(pull_request_nos: '{}') }
+  scope :for_user, lambda { |user| where("'#{user.pt_id}' = ANY(pt_owner_ids)") }
 
   def pt_owner_ids
     super.map(&:to_i)
