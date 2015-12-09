@@ -1,9 +1,11 @@
-table
-  tr
-    th ID
-    th Stories
+- table_th_td_style = 'border: 1px solid black; border-collapse: collapse;'
+
+table style=table_th_td_style
+  tr style='border: 1px solid black;'
+    th style=table_th_td_style ID
+    th style=table_th_td_style Stories
 
   - stories.each do |story|
     tr
-      td= story.tracker_id
-      td= story.name
+      td style=table_th_td_style = story.tracker_id
+      td style=table_th_td_style = story.name
