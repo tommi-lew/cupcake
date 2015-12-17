@@ -3,50 +3,74 @@ require 'rails_helper'
 describe PivotalTrackerService do
   let(:service) { PivotalTrackerService.new }
 
-  def fake_response_body(custom_values = {})
-    [{
-       "kind" => "story",
-       "id" => 111111111,
-       "created_at" => "2015-08-01T12:00:00Z",
-       "updated_at" => "2015-08-01T13:00:00Z",
-       "estimate" => 1,
-       "story_type" => "feature",
-       "name" => "Fake story",
-       "description" => "",
-       "current_state" => "started",
-       "requested_by_id" => 2222222,
-       "project_id" => 123456,
-       "url" => "https://www.pivotaltracker.com/story/show/111111111",
-       "owner_ids" => [2222222, 3333333],
-       "labels" => [],
-       "owned_by_id" => 2222222
-     }.merge(custom_values)]
+  def fake_story_response_body(custom_values = {})
+    {
+      "kind" => "story",
+      "id" => 111111111,
+      "created_at" => "2015-08-01T12:00:00Z",
+      "updated_at" => "2015-08-01T13:00:00Z",
+      "estimate" => 1,
+      "story_type" => "feature",
+      "name" => "Fake story",
+      "description" => "",
+      "current_state" => "started",
+      "requested_by_id" => 2222222,
+      "project_id" => 123456,
+      "url" => "https://www.pivotaltracker.com/story/show/111111111",
+      "owner_ids" => [2222222, 3333333],
+      "labels" => [],
+      "owned_by_id" => 2222222
+    }.merge(custom_values)
+  end
+
+  def fake_stories_response_body(custom_values = {})
+    [fake_story_response_body.merge(custom_values)]
+  end
+
+  def fake_story_unfound_response_body
+    { "code" => "unfound_resource",
+      "kind" => "error",
+      "error"=> "Some error message"
+    }
   end
 
   describe '#get_stories' do
     it 'get stories' do
       fake_response = Object.new
 
-      stub(fake_response).body { fake_response_body.to_json }
+      stub(fake_response).body { fake_stories_response_body.to_json }
       mock(Excon).get(anything, anything) { fake_response }
 
       stories = service.get_stories
 
-      expect(stories).to eq(fake_response_body)
+      expect(stories).to eq(fake_stories_response_body)
+    end
+  end
+
+  describe '#get_story' do
+    it 'get story' do
+      fake_response = Object.new
+
+      stub(fake_response).body { fake_story_response_body.to_json }
+      mock(Excon).get(anything, anything) { fake_response }
+
+      stories = service.get_story(111111111)
+
+      expect(stories).to eq(fake_story_response_body)
     end
   end
 
   describe '#create_or_update_stories' do
     it 'create new pivotal tracker stories' do
       expect {
-        service.create_or_update_stories(fake_response_body, update_only: false)
+        service.create_or_update_stories(fake_stories_response_body, update_only: false)
       }.to change(PivotalTrackerStory, :count).by(1)
 
       story = PivotalTrackerStory.last
       expect(story.tracker_id).to eq '111111111'
       expect(story.name).to eq 'Fake story'
       expect(story.pt_owner_ids).to eq [2222222, 3333333]
-      expect(story.data).to eq fake_response_body.first
+      expect(story.data).to eq fake_stories_response_body.first
     end
 
     it 'updates existing pivotal tracker stories' do
@@ -55,10 +79,10 @@ describe PivotalTrackerService do
         tracker_id: '111111111',
         name: 'Fake story',
         state: 'started',
-        data: fake_response_body.first
+        data: fake_stories_response_body.first
       )
 
-      changed_fake_response_body = fake_response_body('name' => 'Very fake story')
+      changed_fake_response_body = fake_stories_response_body('name' => 'Very fake story')
 
       expect {
         service.create_or_update_stories(changed_fake_response_body)
@@ -75,19 +99,19 @@ describe PivotalTrackerService do
           tracker_id: '111111111',
           name: 'Fake story',
           state: 'started',
-          data: fake_response_body
+          data: fake_stories_response_body
         )
       end
 
       it 'does not create a new story' do
         expect {
-          service.create_or_update_stories(fake_response_body, update_only: true)
+          service.create_or_update_stories(fake_stories_response_body, update_only: true)
         }.to change(PivotalTrackerStory, :count).by(0)
       end
 
       it 'update existing story' do
         service.create_or_update_stories(
-          fake_response_body('owner_ids' => [9999999]),
+          fake_stories_response_body('owner_ids' => [9999999]),
           update_only: true
         )
 
@@ -97,9 +121,28 @@ describe PivotalTrackerService do
     end
   end
 
+  describe '#update_off_local_stories' do
+    it 'updates existing pivotal tracker stories' do
+      story = create(:pivotal_tracker_story)
+
+      fake_response = fake_story_response_body(
+        'id' => story.id,
+        'current_state' => 'accepted'
+      )
+
+      mock(service).get_story(story.id) { fake_response }
+
+      service.update_from_local_stories
+
+      expect(story.reload.state).to eq('accepted')
+    end
+  end
+
   describe '#bulk_update' do
     it 'update stories for all states' do
-      fake_response = fake_response_body
+      mock(service).update_from_local_stories
+
+      fake_response = fake_stories_response_body
 
       PivotalTrackerStory.create_and_update_states.each do |state|
         mock(service).get_stories("state:#{state}") { fake_response }
@@ -112,6 +155,33 @@ describe PivotalTrackerService do
       end
 
       service.bulk_update
+    end
+  end
+
+  describe '#update_story' do
+    it "updates a pivotal tracker story with api's response" do
+      story = create(:pivotal_tracker_story)
+      fake_response = fake_story_response_body
+
+      service.send(:update_story, story, fake_response)
+
+      story.reload
+      expect(story.name).to eq(fake_response['name'])
+      expect(story.pt_owner_ids).to eq(fake_response['owner_ids'])
+      expect(story.state).to eq(fake_response['current_state'])
+      expect(story.data).to eq(fake_response)
+    end
+
+    context 'story is deleted on pivotal tracker' do
+      it 'update the story state as deleted' do
+        story = create(:pivotal_tracker_story)
+        fake_response = fake_story_unfound_response_body
+
+        service.send(:update_story, story, fake_response)
+
+        story.reload
+        expect(story.state).to eq('deleted')
+      end
     end
   end
 

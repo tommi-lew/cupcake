@@ -12,6 +12,12 @@ class PivotalTrackerService
     JSON.parse(response.body)
   end
 
+  def get_story(story_id)
+    url = ENDPOINT_HOST + story_endpoint(story_id)
+    response = Excon.get(url, headers: headers)
+    JSON.parse(response.body)
+  end
+
   def create_or_update_stories(raw_stories, update_only: true)
     raw_stories.each do |raw_story|
       story = if !update_only
@@ -22,16 +28,20 @@ class PivotalTrackerService
 
       next unless story
 
-      story.update_attributes(
-        name: raw_story['name'],
-        pt_owner_ids: raw_story['owner_ids'],
-        state: raw_story['current_state'],
-        data: raw_story
-      )
+      update_story(story, raw_story)
+    end
+  end
+
+  def update_from_local_stories
+    PivotalTrackerStory.where(state: 'started').each do |story|
+      raw_story = get_story(story.id)
+      update_story(story, raw_story)
     end
   end
 
   def bulk_update
+    update_from_local_stories
+
     PivotalTrackerStory.create_and_update_states.each do |state|
       json_response = get_stories("state:#{state}")
       create_or_update_stories(json_response, update_only: false)
@@ -44,6 +54,20 @@ class PivotalTrackerService
   end
 
   private
+
+  def update_story(story, raw_story)
+    if raw_story['kind'] == 'error' && raw_story['code'] == 'unfound_resource'
+      story.update_attributes(state: 'deleted')
+
+    else
+      story.update_attributes(
+        name: raw_story['name'],
+        pt_owner_ids: raw_story['owner_ids'],
+        state: raw_story['current_state'],
+        data: raw_story
+      )
+    end
+  end
 
   def stories_endpoint(filters = nil)
     url = "/projects/#{@project_id}/stories"
