@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 describe GithubService do
-  describe '.update_pivotal_tracker_stories' do
+  let(:service) { GithubService.new }
+
+  describe '#update_pivotal_tracker_stories' do
     it 'update pivotal tracker stories with pull request id' do
       story1 = create(:pivotal_tracker_story)
       story2 = create(:pivotal_tracker_story)
@@ -18,9 +20,9 @@ describe GithubService do
       stub(fake_pr3).title { "[#9] No existent story" }
       stub(fake_pr3).number { 90 }
 
-      stub(GithubService).get_pull_requests { [fake_pr1, fake_pr2, fake_pr3] }
+      stub(service).get_pull_requests { [fake_pr1, fake_pr2, fake_pr3] }
 
-      GithubService.update_pivotal_tracker_stories
+      service.update_pivotal_tracker_stories
 
       story1.reload
       story2.reload
@@ -30,19 +32,13 @@ describe GithubService do
     end
   end
 
-  describe '.get_pull_requests' do
+  describe '#get_pull_requests' do
     it 'hits github api and return open pull requests' do
       mock.instance_of(Github::Client).pull_requests.mock!.list { 'pull_requests' }
 
-      pull_requests = GithubService.get_pull_requests
+      pull_requests = service.get_pull_requests
 
       expect(pull_requests).to eq 'pull_requests'
-    end
-  end
-
-  describe '.github_client' do
-    it 'returns a github client instance' do
-      expect(GithubService.github_client).to be_a Github::Client
     end
   end
 end

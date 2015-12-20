@@ -1,5 +1,9 @@
 class GithubService
-  def self.update_pivotal_tracker_stories
+  def initialize
+    @client = Github.new(user: ENV['GITHUB_OWNER'], repo: ENV['GITHUB_REPO'])
+  end
+
+  def update_pivotal_tracker_stories
     pull_requests = self.get_pull_requests
 
     PivotalTrackerStory.without_pull_requests.each do |story|
@@ -13,13 +17,7 @@ class GithubService
     end
   end
 
-  def self.get_pull_requests
-    self.github_client.pull_requests.list
-  end
-
-  private
-
-  def self.github_client
-    Github.new(user: ENV['GITHUB_OWNER'], repo: ENV['GITHUB_REPO'])
+  def get_pull_requests
+    @client.pull_requests.list
   end
 end
