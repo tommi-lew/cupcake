@@ -7,13 +7,19 @@ gem 'sass-rails', '~> 5.0'
 gem 'slim-rails'
 gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
-gem 'unicorn'
 gem 'excon'
 gem 'github_api'
 gem 'foundation-rails'
-gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
-gem 'rollbar'
+
+# Heroku
 gem 'rails_12factor'
+gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
+
+# Application server
+gem 'unicorn'
+
+# Errors and Exceptions
+gem 'rollbar'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
