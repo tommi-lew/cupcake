@@ -7,5 +7,9 @@ table style=table_th_td_style
 
   - stories.each do |story|
     tr
-      td style=table_th_td_style = story.tracker_id
+      td style=table_th_td_style
+        = link_to story.tracker_id,
+                  "https://www.pivotaltracker.com/story/show/#{story.tracker_id}",
+                  target: '_blank'
+
       td style=table_th_td_style = story.name
