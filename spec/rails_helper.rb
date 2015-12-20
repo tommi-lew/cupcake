@@ -11,7 +11,7 @@ CodeClimate::TestReporter.start
 
 require 'spec_helper'
 require 'rspec/rails'
-require 'shoulda/matchers'
+require 'shoulda_helper'
 require 'rr'
 
 # Add additional requires below this line. Rails is not loaded until this point!
