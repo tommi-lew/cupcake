@@ -14,7 +14,7 @@ class StoriesSummarizer
       devs_and_stories << { dev.name => stories.to_a }
     end
 
-    User.product.(enabled: true).each do |product_manager|
+    User.product.where(enabled: true).each do |product_manager|
       PivotalTrackerStoryMailer.overall_summary(
         product_manager,
         devs_and_stories
