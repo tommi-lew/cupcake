@@ -146,6 +146,8 @@ GEM
       thor (>= 0.18.1, < 2.0)
     raindrops (0.15.0)
     rake (10.4.2)
+    rollbar (2.7.0)
+      multi_json
     rr (1.1.2)
     rspec-core (3.3.2)
       rspec-support (~> 3.3.0)
@@ -234,6 +236,7 @@ DEPENDENCIES
   mailcatcher
   pg
   rails (= 4.2.3)
+  rollbar
   rr
   rspec-rails (~> 3.0)
   sass-rails (~> 5.0)
