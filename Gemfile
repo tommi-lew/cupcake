@@ -40,6 +40,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails'
   gem 'mailcatcher'
+  gem 'codeclimate-test-reporter', require: nil
 end
 
 group :test do
