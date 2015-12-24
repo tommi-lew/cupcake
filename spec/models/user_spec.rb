@@ -6,6 +6,15 @@ describe User do
   it { should validate_presence_of :pt_id }
 
   describe 'scopes' do
+    describe '.enabled' do
+      it 'returns users who are enabled' do
+        create(:user, enabled: false)
+        enabled_user = create(:user, enabled: true)
+
+        expect(User.enabled).to eq([enabled_user])
+      end
+    end
+
     describe '.product' do
       it 'returns users with product role' do
         product_user = create(:user, roles: ['product', 'dev'])
