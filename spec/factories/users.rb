@@ -3,5 +3,6 @@ FactoryGirl.define do
     sequence(:name) { |n| "Baker #{n}" }
     sequence(:email) { |n| "baker#{n}@cupcake.world" }
     sequence(:pt_id) { |n| 1000000 + n }
+    enabled true
   end
 end
