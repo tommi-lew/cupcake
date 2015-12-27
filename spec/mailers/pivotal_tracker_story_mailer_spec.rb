@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-describe PivotalTrackerStoryMailer do
+describe SummarizedStoriesMailer do
   describe '.individual_summary' do
     before do
       @dev = create(:user)
       @story = create(:pivotal_tracker_story, pt_owner_ids: [@dev.pt_id])
 
-      @mail = PivotalTrackerStoryMailer.individual_summary(@dev, [@story])
+      @mail = SummarizedStoriesMailer.individual_summary(@dev, [@story])
     end
 
     it 'delivers with correct recipient, sender and subject' do
@@ -28,7 +28,7 @@ describe PivotalTrackerStoryMailer do
       @dev = create(:user)
       @story = create(:pivotal_tracker_story, pt_owner_ids: [@dev.pt_id])
 
-      @mail = PivotalTrackerStoryMailer.overall_summary(@product_manager, [{ @dev.name => [@story] }])
+      @mail = SummarizedStoriesMailer.overall_summary(@product_manager, [{ @dev.name => [@story] }])
     end
 
     it 'delivers with correct recipient, sender and subject' do

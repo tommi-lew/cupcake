@@ -2,7 +2,7 @@ class StoriesSummarizer
   def self.send_individual_summaries
     User.enabled.developer.each do |dev|
       stories = PivotalTrackerStory.for_user(dev).where(state: 'started')
-      PivotalTrackerStoryMailer.individual_summary(dev, stories).deliver_now!
+      SummarizedStoriesMailer.individual_summary(dev, stories).deliver_now!
     end
   end
 
@@ -15,7 +15,7 @@ class StoriesSummarizer
     end
 
     User.enabled.product.each do |product_manager|
-      PivotalTrackerStoryMailer.overall_summary(
+      SummarizedStoriesMailer.overall_summary(
         product_manager,
         devs_and_stories
       ).deliver_now!

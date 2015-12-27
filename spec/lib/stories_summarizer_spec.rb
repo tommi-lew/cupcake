@@ -8,7 +8,7 @@ describe StoriesSummarizer do
     end
 
     it 'sends each developer their started stories' do
-      mock(PivotalTrackerStoryMailer).individual_summary(@dev, [@story]).mock!.deliver_now!
+      mock(SummarizedStoriesMailer).individual_summary(@dev, [@story]).mock!.deliver_now!
 
       StoriesSummarizer.send_individual_summaries
     end
@@ -31,7 +31,7 @@ describe StoriesSummarizer do
     end
 
     it "sends each product manager a summary of each developer's open stories" do
-      mock(PivotalTrackerStoryMailer).overall_summary(
+      mock(SummarizedStoriesMailer).overall_summary(
         @product_manager,
         [{ @dev1.name => [@story1] }, { @dev2.name => [@story2] }],
       ).mock!.deliver_now!

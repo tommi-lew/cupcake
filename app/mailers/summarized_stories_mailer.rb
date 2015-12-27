@@ -1,4 +1,4 @@
-class PivotalTrackerStoryMailer < ActionMailer::Base
+class SummarizedStoriesMailer < ActionMailer::Base
   def individual_summary(user, stories)
     @user = user
     @stories = stories
