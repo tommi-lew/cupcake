@@ -15,7 +15,19 @@ describe PivotalTrackerStory do
 
         stories = PivotalTrackerStory.without_pull_requests
 
-        expect(stories).to include(*stories_without_pr)
+        expect(stories).to contain_exactly(*stories_without_pr)
+      end
+    end
+
+    describe '.in_progress' do
+      it 'returns started and rejected stories' do
+        started_story = create(:pivotal_tracker_story, state: 'started')
+        rejected_story = create(:pivotal_tracker_story, state: 'rejected')
+        create(:pivotal_tracker_story, state: 'unstarted')
+
+        stories = PivotalTrackerStory.in_progress
+
+        expect(stories).to contain_exactly(started_story, rejected_story)
       end
     end
 
@@ -46,15 +58,15 @@ describe PivotalTrackerStory do
     end
   end
 
-  describe '.create_and_update_states' do
+  describe '.in_progress_states' do
     it 'return states' do
-      expect(PivotalTrackerStory.create_and_update_states).to eq(%w(started))
+      expect(PivotalTrackerStory.in_progress_states).to eq(%w(started rejected))
     end
   end
 
   describe '.only_update_states' do
     it 'return states' do
-      expected_states = %w(unscheduled unstarted finished delivered accepted rejected)
+      expected_states = %w(unscheduled unstarted finished delivered accepted)
       expect(PivotalTrackerStory.only_update_states).to eq(expected_states)
     end
   end

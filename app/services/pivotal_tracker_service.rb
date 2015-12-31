@@ -42,7 +42,7 @@ class PivotalTrackerService
   def bulk_update
     update_from_local_stories
 
-    PivotalTrackerStory.create_and_update_states.each do |state|
+    PivotalTrackerStory.in_progress_states.each do |state|
       json_response = get_stories("state:#{state}")
       create_or_update_stories(json_response, update_only: false)
     end

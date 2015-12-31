@@ -5,6 +5,7 @@ class PivotalTrackerStory < ActiveRecord::Base
   validates_inclusion_of :state, in: VALID_STATES
 
   scope :without_pull_requests, -> { where(pull_request_nos: '{}') }
+  scope :in_progress, -> { where(state: in_progress_states) }
   scope :for_user, lambda { |user| where("'#{user.pt_id}' = ANY(pt_owner_ids)") }
 
   def pt_owner_ids
@@ -15,11 +16,11 @@ class PivotalTrackerStory < ActiveRecord::Base
     super.map(&:to_i)
   end
 
-  def self.create_and_update_states
-    %w(started)
+  def self.in_progress_states
+    %w(started rejected)
   end
 
   def self.only_update_states
-    PivotalTrackerStory::VALID_STATES.reject {|state| %w(started deleted).include?(state) }
+    PivotalTrackerStory::VALID_STATES.reject {|state| %w(started rejected deleted).include?(state) }
   end
 end
