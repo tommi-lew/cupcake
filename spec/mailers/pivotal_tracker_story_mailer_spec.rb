@@ -19,6 +19,7 @@ describe SummarizedStoriesMailer do
       expect(@mail.body.encoded).to match(@dev.name)
       expect(@mail.body.encoded).to match(@story.tracker_id)
       expect(@mail.body.encoded).to match(@story.name)
+      expect(@mail.body.encoded).to match(@story.state)
     end
   end
 
@@ -45,6 +46,7 @@ describe SummarizedStoriesMailer do
       expect(@mail.body.encoded).to match(expected_line2)
       expect(@mail.body.encoded).to match(@story.tracker_id)
       expect(@mail.body.encoded).to match(@story.name)
+      expect(@mail.body.encoded).to match(@story.state)
     end
   end
 end

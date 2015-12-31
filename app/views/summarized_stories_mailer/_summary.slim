@@ -4,6 +4,7 @@ table style=table_th_td_style
   tr style='border: 1px solid black;'
     th style=table_th_td_style ID
     th style=table_th_td_style Stories
+    th style=table_th_td_style State
 
   - stories.each do |story|
     tr
@@ -13,3 +14,4 @@ table style=table_th_td_style
                   target: '_blank'
 
       td style=table_th_td_style = story.name
+      td style=table_th_td_style = story.state
