@@ -193,8 +193,22 @@ describe PivotalTrackerService do
 
     context 'with filters' do
       it 'returns endpoint url' do
-        expected_url = "/projects/#{Rails.application.secrets.pivotal_tracker_project_id}/stories?filter=state:started"
-        expect(service.send(:stories_endpoint, 'state:started')).to eq(expected_url)
+        expected_url = "/projects/#{Rails.application.secrets.pivotal_tracker_project_id}/stories?filter=owner:obiwan"
+        expect(service.send(:stories_endpoint, filters: 'owner:obiwan')).to eq(expected_url)
+      end
+    end
+
+    context 'with state' do
+      it 'returns endpoint url' do
+        expected_url = "/projects/#{Rails.application.secrets.pivotal_tracker_project_id}/stories?with_state=started"
+        expect(service.send(:stories_endpoint, state: 'started')).to eq(expected_url)
+      end
+    end
+
+    context 'all possible params' do
+      it 'returns endpoint url' do
+        expected_url = "/projects/#{Rails.application.secrets.pivotal_tracker_project_id}/stories?with_state=started&filter=owner:obiwan"
+        expect(service.send(:stories_endpoint, filters: 'owner:obiwan', state: 'started')).to eq(expected_url)
       end
     end
   end

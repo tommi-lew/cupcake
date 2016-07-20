@@ -6,8 +6,8 @@ class PivotalTrackerService
     @pivotal_tracker_token = Rails.application.secrets.pivotal_tracker_token
   end
 
-  def get_stories(filters = nil)
-    url = ENDPOINT_HOST + stories_endpoint(filters)
+  def get_stories(filters = nil, state = nil)
+    url = ENDPOINT_HOST + stories_endpoint(filters: filters, state: state)
     response = Excon.get(url, headers: headers)
     JSON.parse(response.body)
   end
@@ -69,11 +69,20 @@ class PivotalTrackerService
     end
   end
 
-  def stories_endpoint(filters = nil)
+  def stories_endpoint(filters: nil, state: nil)
     url = "/projects/#{@project_id}/stories"
+    url_params = []
+
+    if state.present?
+      url_params << "with_state=#{state}"
+    end
 
     if filters.present?
-      return url + "?filter=#{filters}"
+      url_params << "filter=#{filters}"
+    end
+
+    if url_params.present?
+      url = url + "?" + url_params.join("&")
     end
 
     url
