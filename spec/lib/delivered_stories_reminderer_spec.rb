@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe AcceptedStoriesReminderer do
+describe DeliveredStoriesReminderer do
   let(:user) { create(:user, :with_personal_slack_webhook) }
-  let(:reminderer) { AcceptedStoriesReminderer.new(user) }
+  let(:reminderer) { DeliveredStoriesReminderer.new(user) }
 
   describe '#perform' do
     it 'sends out a reminder for delivered stories' do

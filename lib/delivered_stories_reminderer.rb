@@ -1,4 +1,4 @@
-class AcceptedStoriesReminderer
+class DeliveredStoriesReminderer
   def initialize(user)
     @user = user
     @stories = []
