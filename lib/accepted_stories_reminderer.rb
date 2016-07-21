@@ -1,11 +1,12 @@
 class AcceptedStoriesReminderer
   def initialize(user)
     @user = user
-    @stories = nil
+    @stories = []
   end
 
   def perform
     gather_stories
+    return if @stories.count == 0
     send_reminder
   end
 

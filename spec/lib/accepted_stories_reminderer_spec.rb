@@ -6,10 +6,21 @@ describe AcceptedStoriesReminderer do
 
   describe '#perform' do
     it 'sends out a reminder for delivered stories' do
+      reminderer.instance_variable_set(:@stories, [Object.new])
+
       mock(reminderer).gather_stories
       mock(reminderer).send_reminder
 
       reminderer.perform
+    end
+
+    context 'no stories' do
+      it 'does not send reminder' do
+        stub(reminderer).gather_stories
+        dont_allow(reminderer).send_reminder
+
+        reminderer.perform
+      end
     end
   end
 
