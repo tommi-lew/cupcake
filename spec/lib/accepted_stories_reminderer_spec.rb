@@ -14,7 +14,7 @@ describe AcceptedStoriesReminderer do
   end
 
   describe '#gather_stories' do
-    let(:params) { { filters: "owner:#{user.name} state:delivered" } }
+    let(:params) { { filters: "requester:#{user.name} state:delivered" } }
 
     it 'gets delivered stories from pivotal tracker service' do
       mock.instance_of(PivotalTrackerService).get_stories(params) {

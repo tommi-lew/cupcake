@@ -11,7 +11,7 @@ class AcceptedStoriesReminderer
 
   def gather_stories
     json_data = PivotalTrackerService.new.get_stories(
-      filters: "owner:#{@user.name} state:delivered"
+      filters: "requester:#{@user.name} state:delivered"
     )
 
     @stories = PivotalTrackerService.parse_stories(json_data)
