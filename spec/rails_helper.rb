@@ -13,6 +13,7 @@ require 'spec_helper'
 require 'rspec/rails'
 require 'shoulda_helper'
 require 'rr'
+require 'pivotal_tracker_stories_helper'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

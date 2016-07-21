@@ -6,8 +6,9 @@ class PivotalTrackerService
     @pivotal_tracker_token = Rails.application.secrets.pivotal_tracker_token
   end
 
-  def get_stories(filters = nil, state = nil)
+  def get_stories(filters: nil, state: nil)
     url = ENDPOINT_HOST + stories_endpoint(filters: filters, state: state)
+
     response = Excon.get(url, headers: headers)
     JSON.parse(response.body)
   end
@@ -50,6 +51,17 @@ class PivotalTrackerService
     PivotalTrackerStory.only_update_states.each do |state|
       json_response = get_stories("state:#{state}")
       create_or_update_stories(json_response, update_only: true)
+    end
+  end
+
+  def self.parse_stories(json_data)
+    json_data.map do |data|
+      PivotalTrackerStory.new(
+        tracker_id: data['id'],
+        name: data['name'],
+        pt_owner_ids: data['owner_ids'],
+        state: data['current_state']
+      )
     end
   end
 
