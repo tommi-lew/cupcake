@@ -7,4 +7,14 @@ task :recurring_tasks => :environment do
     StoriesSummarizer.send_overall_summaries
     Rails.logger.info 'Sent summaries'
   end
+
+  # Accepted stories reminders
+  if [1, 2, 3, 4, 5].include?(Date.today.wday)
+    users = User.enabled.where.not(personal_slack_webhook: nil)
+    users.each do |user|
+      reminderer = AcceptedStoriesReminderer.new(user)
+      reminderer.perform
+    end
+    Rails.logger.info 'Sent accepted stories reminders'
+  end
 end
