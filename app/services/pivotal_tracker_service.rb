@@ -44,12 +44,12 @@ class PivotalTrackerService
     update_from_local_stories
 
     PivotalTrackerStory.in_progress_states.each do |state|
-      json_response = get_stories("state:#{state}")
+      json_response = get_stories(state: state)
       create_or_update_stories(json_response, update_only: false)
     end
 
     PivotalTrackerStory.only_update_states.each do |state|
-      json_response = get_stories("state:#{state}")
+      json_response = get_stories(state: state)
       create_or_update_stories(json_response, update_only: true)
     end
   end

@@ -114,12 +114,12 @@ describe PivotalTrackerService do
       fake_response = fake_stories_response_body
 
       PivotalTrackerStory.in_progress_states.each do |state|
-        mock(service).get_stories("state:#{state}") { fake_response }
+        mock(service).get_stories(state: state) { fake_response }
         mock(service).create_or_update_stories(fake_response, update_only: false)
       end
 
       PivotalTrackerStory.only_update_states.each do |state|
-        mock(service).get_stories("state:#{state}") { fake_response }
+        mock(service).get_stories(state: state) { fake_response }
         mock(service).create_or_update_stories(fake_response, update_only: true)
       end
 
