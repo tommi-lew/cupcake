@@ -4,7 +4,7 @@ class SlackService
     @webhook_url = webhook_url
   end
 
-  def post
+  def send_message
     Excon.post(
       @webhook_url,
       body: { text: @msg }.to_json
