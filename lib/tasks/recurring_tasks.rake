@@ -10,7 +10,7 @@ task :recurring_tasks => :environment do
 
   # Accepted stories reminders
   if [1, 2, 3, 4, 5].include?(Date.today.wday)
-    users = User.enabled.where.not(personal_slack_webhook: nil)
+    users = User.enabled.where.not(slack_username: nil)
     users.each do |user|
       reminderer = DeliveredStoriesReminderer.new(user)
       reminderer.perform
