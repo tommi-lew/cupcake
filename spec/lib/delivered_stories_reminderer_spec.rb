@@ -57,7 +57,7 @@ describe DeliveredStoriesReminderer do
   describe '#send_reminder' do
     it 'sends reminder with lita hook forward service' do
       fake_service = Object.new
-      msg = "Hello! There are 2 stories waiting for you to accept leh."
+      msg = "Hello from Cupcake!\n There are 2 stories waiting for you to accept leh."
 
       mock(LitaHookForwardService).new(msg, user.slack_username) { fake_service }
       mock(fake_service).send_message
