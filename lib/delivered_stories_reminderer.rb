@@ -22,7 +22,7 @@ class DeliveredStoriesReminderer
     stories_count = @stories.count
     msg = "Hello! There #{'is'.pluralize(stories_count)} #{stories_count} #{'story'.pluralize(stories_count)} waiting for you to accept leh."
 
-    slack_service = SlackService.new(msg, @user.personal_slack_webhook)
-    slack_service.post
+    lita_hook_forward_service = LitaHookForwardService.new(msg, @user.slack_username)
+    lita_hook_forward_service.send_message
   end
 end

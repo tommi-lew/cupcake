@@ -8,5 +8,9 @@ FactoryGirl.define do
     trait :with_personal_slack_webhook do
       sequence(:personal_slack_webhook) { |n| "personal_slack_webhook_#{n}" }
     end
+
+    trait :with_slack_username do
+      sequence(:slack_username) { |n| "slackusername#{n}" }
+    end
   end
 end

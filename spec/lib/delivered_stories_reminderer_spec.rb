@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe DeliveredStoriesReminderer do
-  let(:user) { create(:user, :with_personal_slack_webhook) }
+  let(:user) { create(:user, :with_slack_username) }
   let(:reminderer) { DeliveredStoriesReminderer.new(user) }
 
   describe '#perform' do
@@ -55,12 +55,12 @@ describe DeliveredStoriesReminderer do
   end
 
   describe '#send_reminder' do
-    it 'sends reminder with slack service' do
-      fake_slack_service = Object.new
+    it 'sends reminder with lita hook forward service' do
+      fake_service = Object.new
       msg = "Hello! There are 2 stories waiting for you to accept leh."
 
-      mock(SlackService).new(msg, user.personal_slack_webhook) { fake_slack_service }
-      mock(fake_slack_service).post
+      mock(LitaHookForwardService).new(msg, user.slack_username) { fake_service }
+      mock(fake_service).send_message
 
       stories = build_list(:pivotal_tracker_story, 2)
       reminderer.instance_variable_set(:@stories, stories)
